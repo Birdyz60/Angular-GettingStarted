@@ -3,11 +3,15 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { ProductClassComponent } from './products/product-list.component';
+import { ConvertToStacesPipe } from './shared/convert-to-spaces.pipe';
+import { StarComponent } from './shared/star.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ProductClassComponent
+    ProductClassComponent,
+    ConvertToStacesPipe,
+    StarComponent
   ],
   imports: [
     BrowserModule,
