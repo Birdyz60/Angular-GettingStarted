@@ -1,41 +1,31 @@
 import { Injectable } from "@angular/core";
 import { IProductService } from "./i.product.service";
 import { IProduct } from "./product";
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, Observable, tap, throwError } from "rxjs";
 
 @Injectable()
 export class ProductService implements IProductService {
-  public getProducts(): IProduct[] {
-    return [
-      {
-        "productId": 2,
-        "productName": "Garden Cart",
-        "productCode": "GDN-0023",
-        "releaseDate": "March 18, 2021",
-        "description": "15 gallon capacity rolling garden cart",
-        "price": 32.99,
-        "starRating": 4.2,
-        "imageUrl": "assets/images/garden_cart.png"
-      },
-      {
-        "productId": 5,
-        "productName": "Hammer",
-        "productCode": "TBX-0048",
-        "releaseDate": "May 21, 2021",
-        "description": "Curved claw steel hammer",
-        "price": 8.9,
-        "starRating": 4.8,
-        "imageUrl": "assets/images/hammer.png"
-      },
-      {
-        "productId": 8,
-        "productName": "Saw",
-        "productCode": "TBX-0022",
-        "releaseDate": "May 15, 2021",
-        "description": "15-inch steel blade hand saw",
-        "price": 11.55,
-        "starRating": 3.7,
-        "imageUrl": "assets/images/saw.png"
-      },
-    ];
+  private _productUrl = 'api/products/products.json';
+  constructor(private httpClient: HttpClient) { }
+  public getProducts(): Observable<IProduct[]> {
+    return this.httpClient.get<IProduct[]>(this._productUrl).pipe(
+      // tap, comme map, permet d'accéder aux données. Mais avec tap
+      // on ne fait que regarder, pas de modification
+      // Utile surtout à des fin de débugage
+      tap(data => console.log('All', JSON.stringify(data))),
+      catchError(this.handleError)
+    );
   }
+  private handleError(err: HttpErrorResponse): Observable<never> {
+    let errorMessage = '';
+    if (err.error instanceof ErrorEvent) {
+      errorMessage = `An error occured: ${err.error.message}`;
+    } else {
+      errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
+    }
+    console.error(errorMessage);
+    return throwError(() => errorMessage);
+  }
+
 }

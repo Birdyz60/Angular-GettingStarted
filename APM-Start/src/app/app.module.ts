@@ -7,6 +7,7 @@ import { ConvertToStacesPipe } from './shared/convert-to-spaces.pipe';
 import { StarComponent } from './shared/star.component';
 import { ProductService } from './products/product.service';
 import { IProductService } from './products/i.product.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   providers: [
@@ -23,7 +24,8 @@ import { IProductService } from './products/i.product.service';
   ],
   imports: [
     BrowserModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule
   ],
 
   bootstrap: [AppComponent]
