@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
+import { IProductService } from "./i.product.service";
 import { IProduct } from "./product";
-import { ProductService } from "./product.service";
 
 @Component({
   selector: 'pm-products',
@@ -30,7 +30,7 @@ export class ProductClassComponent implements OnInit {
   //#endregion
 
 
-  constructor(private productService: ProductService) { }
+  constructor(private productService: IProductService) { }
 
   public onToggleImage(): void {
     this.showImage = !this.showImage;

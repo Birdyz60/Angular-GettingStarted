@@ -1,10 +1,9 @@
 import { Injectable } from "@angular/core";
+import { IProductService } from "./i.product.service";
 import { IProduct } from "./product";
 
-@Injectable({
-  providedIn: 'root'
-})
-export class ProductService {
+@Injectable()
+export class ProductService implements IProductService {
   public getProducts(): IProduct[] {
     return [
       {
