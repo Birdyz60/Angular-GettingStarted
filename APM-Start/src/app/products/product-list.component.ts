@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { IProductService } from "./i.product.service";
 import { IProduct } from "./product";
+import { delay, filter, map, Observable, range } from 'rxjs';
 
 @Component({
   selector: 'pm-products',
@@ -16,11 +17,9 @@ export class ProductClassComponent implements OnInit {
   public showImage: boolean = false;
   private _listFilter: string = '';
   public get listFilter(): string {
-    console.log('In get listeFilter()');
     return this._listFilter;
   }
   public set listFilter(value: string) {
-    console.log('In set listeFilter() : ', value);
     this._listFilter = value;
     this.filteredProducts = this.performFilter(value);
   }
@@ -35,10 +34,18 @@ export class ProductClassComponent implements OnInit {
   public onToggleImage(): void {
     this.showImage = !this.showImage;
   }
+  source$: Observable<number> = range(0, 10);
 
   ngOnInit(): void {
     this.products = this.productService.getProducts();
     this.filteredProducts = this.products;
+    this.source$.pipe(
+      // map permet la transformation. Ici chaque élément est multiplié par 3
+      map(x => x * 3),
+      // filtre filtre les éléments (c'est vrai ?!).
+      // Ici on ne va conservé que les nombres pair
+      filter(x => x % 2 === 0)
+    ).subscribe(x => console.log(x))
   }
 
   private performFilter(filterBy: string): IProduct[] {
