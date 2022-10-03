@@ -1,13 +1,17 @@
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
-import { ProductClassComponent } from './products/product-list.component';
+import { WelcomeComponent } from './home/welcome.component';
+import { IProductService } from './products/i.product.service';
+import { ProductDetailComponent } from './products/product-detail.component';
+import { ProductDetailGuard } from './products/product-detail.guard';
+import { ProductListComponent } from './products/product-list.component';
+import { ProductService } from './products/product.service';
 import { ConvertToStacesPipe } from './shared/convert-to-spaces.pipe';
 import { StarComponent } from './shared/star.component';
-import { ProductService } from './products/product.service';
-import { IProductService } from './products/i.product.service';
-import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   providers: [
@@ -18,14 +22,23 @@ import { HttpClientModule } from '@angular/common/http';
   ],
   declarations: [
     AppComponent,
-    ProductClassComponent,
+    WelcomeComponent,
+    ProductListComponent,
     ConvertToStacesPipe,
-    StarComponent
+    StarComponent,
+    ProductDetailComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    RouterModule.forRoot([
+      { path: 'products', component: ProductListComponent },
+      { path: 'products/:id', component: ProductDetailComponent, canActivate: [ProductDetailGuard] },
+      { path: 'welcome', component: WelcomeComponent },
+      { path: '', redirectTo: 'welcome', pathMatch: 'full' },
+      { path: '**', redirectTo: 'welcome', pathMatch: 'full' }
+    ])
   ],
 
   bootstrap: [AppComponent]

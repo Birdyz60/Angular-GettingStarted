@@ -4,12 +4,11 @@ import { IProduct } from "./product";
 import { delay, filter, map, Observable, range, Subscription } from 'rxjs';
 
 @Component({
-  selector: 'pm-products',
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
 
-export class ProductClassComponent implements OnInit, OnDestroy {
+export class ProductListComponent implements OnInit, OnDestroy {
   //#region Propriétés
   public pageTitle: string = 'Product List!';
   public imageWidth: number = 50;
