@@ -1,68 +1,58 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
-import { IProductService } from "./i.product.service";
-import { IProduct } from "./product";
-import { delay, filter, map, Observable, range, Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+
+import { Product } from './product';
+import { ProductService } from './product.service';
 
 @Component({
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
+export class ProductListComponent implements OnInit {
+  pageTitle = 'Product List';
+  imageWidth = 50;
+  imageMargin = 2;
+  showImage = false;
+  errorMessage = '';
 
-export class ProductListComponent implements OnInit, OnDestroy {
-  //#region Propriétés
-  public pageTitle: string = 'Product List!';
-  public imageWidth: number = 50;
-  public imageMargin: number = 2;
-  public showImage: boolean = false;
-  private _listFilter: string = '';
-  public errorMessage: string = '';
-  private _sub!: Subscription;
-  public get listFilter(): string {
+  _listFilter = '';
+  get listFilter(): string {
     return this._listFilter;
   }
-  public set listFilter(value: string) {
+  set listFilter(value: string) {
     this._listFilter = value;
-    this.filteredProducts = this.performFilter(value);
+    this.filteredProducts = this.listFilter ? this.performFilter(this.listFilter) : this.products;
   }
 
-  public filteredProducts: IProduct[] = [];
-  public products: IProduct[] = [];
-  //#endregion
+  filteredProducts: Product[] = [];
+  products: Product[] = [];
 
+  constructor(private productService: ProductService) { }
 
-  constructor(private productService: IProductService) { }
+  performFilter(filterBy: string): Product[] {
+    filterBy = filterBy.toLocaleLowerCase();
+    return this.products.filter((product: Product) =>
+      product.productName.toLocaleLowerCase().indexOf(filterBy) !== -1);
+  }
 
-  public onToggleImage(): void {
+  // Checks both the product name and tags
+  performFilter2(filterBy: string): Product[] {
+    filterBy = filterBy.toLocaleLowerCase();
+    return this.products.filter((product: Product) =>
+      product.productName.toLocaleLowerCase().indexOf(filterBy) !== -1 ||
+        (product.tags && product.tags.some(tag => tag.toLocaleLowerCase().indexOf(filterBy) !== -1)));
+  }
+
+  toggleImage(): void {
     this.showImage = !this.showImage;
   }
-  source$: Observable<number> = range(0, 10);
 
   ngOnInit(): void {
-    this._sub = this.productService.getProducts().subscribe({
+    this.productService.getProducts().subscribe({
       next: products => {
         this.products = products;
         this.filteredProducts = this.products;
       },
       error: err => this.errorMessage = err
     });
-    this.source$.pipe(
-      // map permet la transformation. Ici chaque élément est multiplié par 3
-      map(x => x * 3),
-      // filtre filtre les éléments (c'est vrai ?!).
-      // Ici on ne va conservé que les nombres pair
-      filter(x => x % 2 === 0)
-    ).subscribe(x => console.log(x))
-  }
-  ngOnDestroy(): void {
-    this._sub.unsubscribe();
-  }
-  private performFilter(filterBy: string): IProduct[] {
-    filterBy = filterBy.toLocaleLowerCase();
-    return this.products.filter((product: IProduct) =>
-      product.productName.toLocaleLowerCase().includes(filterBy));
-  }
-
-  public onRatingClicked(message: string): void {
-    this.pageTitle = `Product List : ${message}`;
   }
 }
